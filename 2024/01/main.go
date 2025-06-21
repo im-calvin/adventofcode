@@ -57,4 +57,17 @@ func main() {
 
 	fmt.Printf("Answer is %d\n", sum)
 
+	// part 2
+	var similarityScore int = 0
+	rightFreqMap := make(map[int]int) // maps the number to the frequency
+
+	for _, v := range rightCol {
+		rightFreqMap[v] = rightFreqMap[v] + 1
+	}
+
+	for _, v := range leftCol {
+		similarityScore = similarityScore + v*rightFreqMap[v]
+	}
+
+	fmt.Printf("Answer is %d\n", similarityScore)
 }
