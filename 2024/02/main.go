@@ -37,6 +37,7 @@ func main() {
 		}
 
 		isIncreasing := levels[0] < levels[1]
+		damperUsed := false // part 2
 
 		for i, curr := range levels {
 			if i == len(levels)-1 {
@@ -47,15 +48,13 @@ func main() {
 
 			// 1. all levels are either increasing or decreasing
 			// if fail then go to next
-			if abs(curr, next) == 0 || abs(curr, next) > 3 {
-				numFail++
-				break
-			} else if isIncreasing && (curr > next) {
-				numFail++
-				break
-			} else if !isIncreasing && (curr < next) {
-				numFail++
-				break
+			// Check if the difference is invalid or direction changes
+			if abs(curr, next) == 0 || abs(curr, next) > 3 || (isIncreasing && curr > next) || (!isIncreasing && curr < next) {
+				if damperUsed {
+					numFail++
+					break
+				}
+				damperUsed = true
 			}
 		}
 	}
