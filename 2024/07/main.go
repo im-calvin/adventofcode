@@ -31,11 +31,20 @@ func add(curr int, i int, nums []int) int {
 	return sum
 }
 
-func checkAns(a int, b int, result int) int {
+func concat(curr int, next int) int {
+	concated := strconv.Itoa(curr) + strconv.Itoa(next)
+	res, err := strconv.Atoi(concated)
+	check(err)
+	return res
+}
+
+func checkAns(a int, b int, c int, result int) int {
 	if a == result {
 		return a
 	} else if b == result {
 		return b
+	} else if c == result {
+		return c
 	} else {
 		return math.MaxInt
 	}
@@ -51,11 +60,13 @@ func helper(curr int, i int, result int, nums []int) int {
 	} else {
 		product := mult(curr, i, nums)
 		sum := add(curr, i, nums)
+		concat := concat(curr, nums[i])
 
 		res1 := helper(product, i+1, result, nums)
 		res2 := helper(sum, i+1, result, nums)
+		res3 := helper(concat, i+1, result, nums)
 
-		return checkAns(res1, res2, result)
+		return checkAns(res1, res2, res3, result)
 	}
 }
 
