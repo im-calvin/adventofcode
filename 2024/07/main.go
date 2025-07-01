@@ -42,7 +42,7 @@ func checkAns(a int, b int, result int) int {
 }
 
 func helper(curr int, i int, result int, nums []int) int {
-	if curr == result {
+	if curr == result && i == len(nums) {
 		return curr
 	} else if curr > result {
 		return math.MaxInt
