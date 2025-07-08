@@ -24,6 +24,33 @@ func checkNode(coord Coordinate, maxX int, maxY int) bool {
 	return true
 }
 
+func getAntiNodes(new Coordinate, old Coordinate, maxX int, maxY int) []Coordinate {
+	res := make([]Coordinate, 0)
+
+	// do negative path
+	n := 1
+	zCoord := Coordinate{X: old.X - new.X, Y: old.Y - new.Y}
+	antiNode := Coordinate{X: old.X - zCoord.X*n, Y: old.Y - zCoord.Y*n}
+
+	for checkNode(antiNode, maxX, maxY) {
+		res = append(res, antiNode)
+		n++
+		antiNode = Coordinate{X: old.X - zCoord.X*n, Y: old.Y - zCoord.Y*n}
+	}
+
+	// do positive path
+	n = 1
+	antiNode = Coordinate{X: new.X + zCoord.X*n, Y: new.Y + zCoord.Y*n}
+
+	for checkNode(antiNode, maxX, maxY) {
+		res = append(res, antiNode)
+		n++
+		antiNode = Coordinate{X: new.X + zCoord.X*n, Y: new.Y + zCoord.Y*n}
+	}
+
+	return res
+}
+
 // maxX and maxY are the result of len(grid) and len(grid[0]) - 1, so we need to subtract 1
 func helper(new Coordinate, antennas []Coordinate, maxX int, maxY int) []Coordinate {
 	res := make([]Coordinate, 0)
@@ -35,17 +62,8 @@ func helper(new Coordinate, antennas []Coordinate, maxX int, maxY int) []Coordin
 		if new == oldCoord {
 			continue
 		}
-		zCoord := Coordinate{X: oldCoord.X - new.X, Y: oldCoord.Y - new.Y}
-		node1 := Coordinate{X: oldCoord.X - zCoord.X*2, Y: oldCoord.Y - zCoord.Y*2}
-		node2 := Coordinate{X: new.X + zCoord.X*2, Y: new.Y + zCoord.Y*2}
 
-		// check that they are in bounds to add them to the result
-		if checkNode(node1, maxX, maxY) {
-			res = append(res, node1)
-		}
-		if checkNode(node2, maxX, maxY) {
-			res = append(res, node2)
-		}
+		res = append(res, getAntiNodes(new, oldCoord, maxX, maxY)...)
 	}
 
 	return res
@@ -54,7 +72,7 @@ func helper(new Coordinate, antennas []Coordinate, maxX int, maxY int) []Coordin
 func main() {
 	fmt.Println("Hello, World!")
 
-	file, err := os.Open("./input")
+	file, err := os.Open("./test")
 	check(err)
 
 	scanner := bufio.NewScanner(file)
@@ -62,9 +80,10 @@ func main() {
 
 	x := 0
 	maxY := 0
+	// find all the antennas
 	for scanner.Scan() {
 		lineStr := scanner.Text()
-		maxY = len(lineStr)
+		maxY = max(maxY, len(lineStr))
 		for y, char := range lineStr {
 			if char != '.' {
 				coord := Coordinate{X: x, Y: y}
@@ -76,6 +95,7 @@ func main() {
 
 	maxX := x
 
+	// prepopulate the antiNodeGrid
 	antiNodeGrid := make([][]rune, maxX)
 	for i := range antiNodeGrid {
 		antiNodeGrid[i] = make([]rune, maxY)
@@ -84,6 +104,7 @@ func main() {
 		}
 	}
 
+	// find the antiNodes
 	for _, antennas := range runeToAntennas {
 		for _, antenna := range antennas {
 			antinodes := helper(antenna, antennas, maxX, maxY)
@@ -95,6 +116,7 @@ func main() {
 
 	numAntiNodes := 0
 
+	// count the num of unique antiNodes within the grid
 	for _, arr := range antiNodeGrid {
 		for _, char := range arr {
 			if char == '#' {
@@ -103,5 +125,5 @@ func main() {
 		}
 	}
 
-	fmt.Print(numAntiNodes)
+	fmt.Println(numAntiNodes)
 }
