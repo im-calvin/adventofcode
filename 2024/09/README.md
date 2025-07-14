@@ -13,3 +13,8 @@ G
 helpers: 
 - checksum: calc until we reach a `.` 
 - swap 2 nums j
+
+## Post Mortem
+
+### Part 1
+- using custom structs makes a lot of sense because if ids > 9 (double digits) then just using strings and runes doesn't work (double digit = 2 single digits)
