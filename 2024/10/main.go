@@ -88,35 +88,25 @@ func main() {
 		i++
 	}
 
-	sum := 0
-
 	// we should do bfs because then we can check the height positions evenly
-	for _, trailhead := range trailheads.contents {
-		peaks := make(map[Coord]struct{})
-		queue := Queue[Coord]{contents: make([]Coord, 0)}
-		queue.enqueSingle(trailhead)
 
-		length := queue.len() // the number of nums that still need to be processed
-		height := 0
+	sum := 0
+	length := trailheads.len() // the number of nums that still need to be processed
+	height := 0
 
-		for !queue.isEmpty() {
-			coord := queue.deque()
-			length--
-			if grid[coord.x][coord.y] == 9 {
-				peaks[coord] = struct{}{}
-			}
-
-			travelable := travel(height, coord, grid)
-			queue.enqueSlice(travelable)
-
-			if length == 0 {
-				length = queue.len()
-				height++
-			}
-
+	for !trailheads.isEmpty() {
+		coord := trailheads.deque()
+		length--
+		if grid[coord.x][coord.y] == 9 {
+			sum++
 		}
+		travelable := travel(height, coord, grid)
+		trailheads.enqueSlice(travelable)
 
-		sum += len(peaks)
+		if length == 0 {
+			length = trailheads.len()
+			height++
+		}
 	}
 
 	fmt.Println(sum)
